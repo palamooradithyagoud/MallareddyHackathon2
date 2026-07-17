@@ -5,7 +5,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/api/index.py"
+      "dest": "/api/index.py"
     },
     {
       "handle": "filesystem"
