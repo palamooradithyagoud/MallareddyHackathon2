@@ -1,5 +1,5 @@
 """
-api/index.py — Vercel Serverless Entrypoint for HireMate FastAPI with Diagnostics
+backend/api/index.py — Vercel Serverless Entrypoint for HireMate FastAPI inside backend directory
 
 This file functions as the Vercel entrypoint. It runs a diagnostic startup check,
 lists registered routes, and prints a complete traceback if any module fails to import.
@@ -15,9 +15,10 @@ print(f"Current Working Directory: {os.getcwd()}")
 
 # ---------------------------------------------------------------------------
 # Path setup
+# Since this file is in backend/api/, the backend folder is the parent directory.
 # ---------------------------------------------------------------------------
 _backend_dir = os.path.abspath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "backend")
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 )
 print(f"Backend directory path resolved: {_backend_dir}")
 if _backend_dir not in sys.path:
