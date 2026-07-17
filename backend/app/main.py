@@ -1,62 +1,85 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine, Base
 from app.config import settings
 
-# Import models to ensure they register on Base.metadata
-from app import models
 
-# Import routers
-from app.routers import auth, dashboard, profile, resume, preferences, settings as user_settings
+# ---------------------------------------------------------------------------
+# Lifespan — DB table creation runs AFTER app startup, not at import time.
+# This prevents Supabase connection timeouts from blocking Vercel cold starts.
+# ---------------------------------------------------------------------------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: create tables if they do not exist yet
+    try:
+        from app.database import engine, Base
+        # Import models so they register on Base.metadata before create_all
+        from app import models  # noqa: F401
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        # Log but never crash — tables may already exist in production
+        print(f"[startup] Warning: create_all skipped: {e}")
+    yield
+    # Shutdown: nothing to clean up for a stateless serverless function
 
-# Create database tables automatically (safe no-op if already exist; wrapped for serverless safety)
-try:
-    Base.metadata.create_all(bind=engine)
-except Exception as e:
-    print(f"Warning: Could not run create_all: {e}")
 
-
+# ---------------------------------------------------------------------------
+# Application instance
+# ---------------------------------------------------------------------------
 app = FastAPI(
     title="HireMate API",
     description="Scalable backend API foundation for HireMate AI Career Platform",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan,
 )
 
-# Configure CORS
-origins = [
-    "http://localhost:5173",  # Vite default
-    "http://localhost:3000",  # Common React port
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000",
-    "*"  # Fallback for dynamic hostings/review builds
-]
 
+# ---------------------------------------------------------------------------
+# CORS
+# ---------------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust in strict production, allow all for dev testing
+    allow_origins=["*"],  # Tighten to specific domains in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount Routers under /api
-app.include_router(auth.router, prefix="/api")
-app.include_router(dashboard.router, prefix="/api")
-app.include_router(profile.router, prefix="/api")
-app.include_router(resume.router, prefix="/api")
-app.include_router(preferences.router, prefix="/api")
+
+# ---------------------------------------------------------------------------
+# Import routers — done AFTER app is constructed to avoid circular imports
+# ---------------------------------------------------------------------------
+from app.routers import auth, dashboard, profile, resume, preferences  # noqa: E402
+from app.routers import settings as user_settings  # noqa: E402
+
+app.include_router(auth.router,          prefix="/api")
+app.include_router(dashboard.router,     prefix="/api")
+app.include_router(profile.router,       prefix="/api")
+app.include_router(resume.router,        prefix="/api")
+app.include_router(preferences.router,   prefix="/api")
 app.include_router(user_settings.router, prefix="/api")
 
-@app.get("/api/health")
+
+# ---------------------------------------------------------------------------
+# Root & health endpoints
+# ---------------------------------------------------------------------------
+@app.get("/", tags=["Meta"])
+def read_root():
+    """Root endpoint — confirms the API is alive."""
+    return {"message": "HireMate API Running"}
+
+
+@app.get("/health", tags=["Meta"])
 def health_check():
+    """Bare health check (no /api prefix) — used by uptime monitors."""
+    return {"status": "healthy"}
+
+
+@app.get("/api/health", tags=["Meta"])
+def api_health_check():
+    """Health check under /api — used by the frontend AuthContext."""
     return {
         "status": "healthy",
         "environment": settings.ENVIRONMENT,
-        "database": "connected"
-    }
-
-@app.get("/")
-def read_root():
-    return {
-        "message": "Welcome to the HireMate API. Visit /docs for Swagger UI documentation."
+        "database": "connected",
     }
