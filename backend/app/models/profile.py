@@ -2,7 +2,7 @@ import uuid
 from sqlalchemy import Column, String, Integer, Numeric, Date, Text, ForeignKey, JSON, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from backend.app.database import Base
+from app.database import Base
 
 class Profile(Base):
     __tablename__ = "profiles"

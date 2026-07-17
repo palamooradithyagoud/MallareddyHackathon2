@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from backend.app.database import get_db
-from backend.app.dependencies import get_current_user
-from backend.app.models.user import User
-from backend.app.models.settings import UserSettings
-from backend.app.models.resume import ResumeVersion, Resume
-from backend.app.schemas.settings import UserSettingsResponse, UserSettingsUpdate
-from backend.app.utils.helpers import log_activity
+from app.database import get_db
+from app.dependencies import get_current_user
+from app.models.user import User
+from app.models.settings import UserSettings
+from app.models.resume import ResumeVersion, Resume
+from app.schemas.settings import UserSettingsResponse, UserSettingsUpdate
+from app.utils.helpers import log_activity
 import os
 
 router = APIRouter(prefix="/settings", tags=["Settings"])

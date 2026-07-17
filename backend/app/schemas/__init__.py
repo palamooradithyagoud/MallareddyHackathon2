@@ -1,9 +1,9 @@
-from backend.app.schemas.auth import UserRegister, UserLogin, UserResponse, Token, GoogleLoginRequest
-from backend.app.schemas.profile import ProfileUpdate, ProfileResponse, ExperienceSchema, CertificationSchema
-from backend.app.schemas.preferences import CareerPreferencesUpdate, CareerPreferencesResponse
-from backend.app.schemas.resume import ResumeResponse, ResumeVersionResponse
-from backend.app.schemas.settings import UserSettingsUpdate, UserSettingsResponse
-from backend.app.schemas.dashboard import DashboardResponse, ActivityLogResponse
+from app.schemas.auth import UserRegister, UserLogin, UserResponse, Token, GoogleLoginRequest
+from app.schemas.profile import ProfileUpdate, ProfileResponse, ExperienceSchema, CertificationSchema
+from app.schemas.preferences import CareerPreferencesUpdate, CareerPreferencesResponse
+from app.schemas.resume import ResumeResponse, ResumeVersionResponse
+from app.schemas.settings import UserSettingsUpdate, UserSettingsResponse
+from app.schemas.dashboard import DashboardResponse, ActivityLogResponse
 
 __all__ = [
     "UserRegister",

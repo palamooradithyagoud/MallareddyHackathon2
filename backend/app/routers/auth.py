@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 import uuid
 
-from backend.app.database import get_db
-from backend.app.models.user import User
-from backend.app.models.profile import Profile
-from backend.app.models.preferences import CareerPreferences
-from backend.app.models.settings import UserSettings
-from backend.app.schemas.auth import UserRegister, UserLogin, Token, GoogleLoginRequest, UserResponse
-from backend.app.utils.security import verify_password, get_password_hash, create_access_token
-from backend.app.utils.helpers import log_activity
+from app.database import get_db
+from app.models.user import User
+from app.models.profile import Profile
+from app.models.preferences import CareerPreferences
+from app.models.settings import UserSettings
+from app.schemas.auth import UserRegister, UserLogin, Token, GoogleLoginRequest, UserResponse
+from app.utils.security import verify_password, get_password_hash, create_access_token
+from app.utils.helpers import log_activity
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -195,7 +195,7 @@ def logout(request: Request, db: Session = Depends(get_db)):
         payload = verify_password
         # Decode and log if valid
         try:
-            from backend.app.utils.security import verify_token
+            from app.utils.security import verify_token
             p_data = verify_token(token)
             if p_data:
                 user_id = p_data.get("sub")

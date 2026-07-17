@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from backend.app.database import get_db
-from backend.app.dependencies import get_current_user
-from backend.app.models.user import User
-from backend.app.models.profile import Profile
-from backend.app.schemas.profile import ProfileResponse, ProfileUpdate
-from backend.app.utils.helpers import log_activity, calculate_completion_percentage
+from app.database import get_db
+from app.dependencies import get_current_user
+from app.models.user import User
+from app.models.profile import Profile
+from app.schemas.profile import ProfileResponse, ProfileUpdate
+from app.utils.helpers import log_activity, calculate_completion_percentage
 from typing import Any
 
 router = APIRouter(prefix="/profile", tags=["Profile"])

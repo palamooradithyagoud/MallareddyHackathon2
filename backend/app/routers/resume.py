@@ -4,13 +4,13 @@ from sqlalchemy.orm import Session
 import os
 import uuid
 
-from backend.app.database import get_db
-from backend.app.dependencies import get_current_user
-from backend.app.models.user import User
-from backend.app.models.resume import Resume, ResumeVersion
-from backend.app.schemas.resume import ResumeResponse
-from backend.app.config import settings
-from backend.app.utils.helpers import log_activity
+from app.database import get_db
+from app.dependencies import get_current_user
+from app.models.user import User
+from app.models.resume import Resume, ResumeVersion
+from app.schemas.resume import ResumeResponse
+from app.config import settings
+from app.utils.helpers import log_activity
 
 router = APIRouter(prefix="/resume", tags=["Resume"])
 

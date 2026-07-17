@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-from backend.app.config import settings
+from app.config import settings
 
 # If using SQLite, add check_same_thread configuration
 if settings.DATABASE_URL.startswith("sqlite"):

@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.database import engine, Base
-from backend.app.config import settings
+from app.database import engine, Base
+from app.config import settings
 
 # Import models to ensure they register on Base.metadata
-from backend.app import models
+from app import models
 
 # Import routers
-from backend.app.routers import auth, dashboard, profile, resume, preferences, settings as user_settings
+from app.routers import auth, dashboard, profile, resume, preferences, settings as user_settings
 
 # Create database tables automatically (for sqlite fallback and initial deployment convenience)
 Base.metadata.create_all(bind=engine)

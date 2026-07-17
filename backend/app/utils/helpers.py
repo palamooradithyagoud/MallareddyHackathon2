@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from backend.app.models.activity import ActivityLog
-from backend.app.models.profile import Profile
+from app.models.activity import ActivityLog
+from app.models.profile import Profile
 import json
 
 def log_activity(db: Session, user_id: str, action: str, description: str, ip_address: str = None):

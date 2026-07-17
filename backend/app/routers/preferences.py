@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from backend.app.database import get_db
-from backend.app.dependencies import get_current_user
-from backend.app.models.user import User
-from backend.app.models.preferences import CareerPreferences
-from backend.app.schemas.preferences import CareerPreferencesResponse, CareerPreferencesUpdate
-from backend.app.utils.helpers import log_activity
+from app.database import get_db
+from app.dependencies import get_current_user
+from app.models.user import User
+from app.models.preferences import CareerPreferences
+from app.schemas.preferences import CareerPreferencesResponse, CareerPreferencesUpdate
+from app.utils.helpers import log_activity
 
 router = APIRouter(prefix="/preferences", tags=["Career Preferences"])
 

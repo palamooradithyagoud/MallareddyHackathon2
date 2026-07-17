@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from backend.app.database import get_db
-from backend.app.dependencies import get_current_user
-from backend.app.models.user import User
-from backend.app.models.profile import Profile
-from backend.app.models.resume import Resume
-from backend.app.models.activity import ActivityLog
-from backend.app.schemas.dashboard import DashboardResponse, ActivityLogResponse
-from backend.app.schemas.resume import ResumeResponse
+from app.database import get_db
+from app.dependencies import get_current_user
+from app.models.user import User
+from app.models.profile import Profile
+from app.models.resume import Resume
+from app.models.activity import ActivityLog
+from app.schemas.dashboard import DashboardResponse, ActivityLogResponse
+from app.schemas.resume import ResumeResponse
 from typing import Dict, Any
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])

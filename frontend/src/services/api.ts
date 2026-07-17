@@ -1,7 +1,9 @@
 import axios from "axios";
 
-// Default backend API URL
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+// In production (Vercel) /api routes to the serverless function on the same domain.
+// In development it proxies to the local FastAPI server.
+const API_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? "/api" : "http://localhost:8000/api");
 
 const api = axios.create({
   baseURL: API_URL,
