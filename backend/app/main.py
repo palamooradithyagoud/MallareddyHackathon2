@@ -9,8 +9,12 @@ from app import models
 # Import routers
 from app.routers import auth, dashboard, profile, resume, preferences, settings as user_settings
 
-# Create database tables automatically (for sqlite fallback and initial deployment convenience)
-Base.metadata.create_all(bind=engine)
+# Create database tables automatically (safe no-op if already exist; wrapped for serverless safety)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"Warning: Could not run create_all: {e}")
+
 
 app = FastAPI(
     title="HireMate API",

@@ -17,13 +17,17 @@ class Settings(BaseSettings):
     # Google Auth Settings (Optional)
     GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")
     
-    # Upload folder
-    UPLOAD_DIR: str = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "uploads")
+    # Upload folder — use /tmp on serverless (Vercel), local path in development
+    UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", "/tmp/hiremate_uploads")
 
     class Config:
         case_sensitive = True
 
 settings = Settings()
 
-# Ensure uploads directory exists
-os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+# Ensure uploads directory exists — wrapped so a read-only filesystem never crashes startup
+try:
+    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+except Exception:
+    pass
+
