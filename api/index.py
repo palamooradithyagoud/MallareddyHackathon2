@@ -2,6 +2,8 @@
 api/index.py — Vercel Serverless Entrypoint for HireMate FastAPI
 
 This file is the single handler Vercel calls for every /api/* request.
+We import 'app' at the top level of this module (unindented) so Vercel's
+static checker can discover the FastAPI instance.
 """
 import sys
 import os
@@ -15,13 +17,9 @@ _backend_dir = os.path.abspath(
 if _backend_dir not in sys.path:
     sys.path.insert(0, _backend_dir)
 
-try:
-    from app.main import app
-except Exception as e:
-    import traceback
-    # Print to stderr instead of stdout so it doesn't corrupt Vercel's IPC channel at build time
-    print("=== STARTUP FAILED ===", file=sys.stderr)
-    traceback.print_exc(file=sys.stderr)
-    raise e
-
-__all__ = ["app"]
+# ---------------------------------------------------------------------------
+# Import the real FastAPI application
+# This statement is at the absolute top-level (unindented) to satisfy the
+# Vercel static parser's inspection of the entrypoint file.
+# ---------------------------------------------------------------------------
+from app.main import app
