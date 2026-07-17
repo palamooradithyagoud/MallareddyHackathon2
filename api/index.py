@@ -1,33 +1,51 @@
 """
-api/index.py — Vercel Serverless Entrypoint for HireMate FastAPI
+api/index.py — Vercel Serverless Entrypoint for HireMate FastAPI with Diagnostics
 
-This file is the single handler Vercel calls for every /api/* request.
-It adds the backend directory to sys.path so `from app.*` imports resolve,
-then directly imports and re-exports the real FastAPI `app` from main.py.
-
-There is NO stub-app rebind pattern here. If the import fails, the error
-is re-raised immediately so Vercel surfaces the real traceback in its logs
-(instead of silently serving a stub app with no routes).
+This file functions as the Vercel entrypoint. It runs a diagnostic startup check,
+lists registered routes, and prints a complete traceback if any module fails to import.
 """
 import sys
 import os
+import platform
+import traceback
+
+print("=== STARTUP BEGIN ===")
+print(f"Python Version: {platform.python_version()}")
+print(f"Current Working Directory: {os.getcwd()}")
 
 # ---------------------------------------------------------------------------
-# Path setup — must happen before any `from app.*` import
+# Path setup
 # ---------------------------------------------------------------------------
 _backend_dir = os.path.abspath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "backend")
 )
+print(f"Backend directory path resolved: {_backend_dir}")
 if _backend_dir not in sys.path:
     sys.path.insert(0, _backend_dir)
+print(f"sys.path: {sys.path}")
 
-# ---------------------------------------------------------------------------
-# Import the real FastAPI application
-# Any exception here is intentionally NOT caught so Vercel logs the full
-# traceback rather than silently returning 404 for every route.
-# ---------------------------------------------------------------------------
-from app.main import app  # noqa: E402  (import after sys.path manipulation)
+try:
+    print("Importing app.main...")
+    from app.main import app
+    print("Successfully imported app.main")
 
-# `app` is now the fully-configured FastAPI instance with all routers mounted.
-# Vercel's Python runtime looks for a module-level `app` object to serve.
+    # Logging key imported modules
+    print(f"Successfully loaded {len(sys.modules)} modules.")
+
+    # Audit & Log registered endpoints
+    print("Registered Routers & Endpoints:")
+    for route in app.routes:
+        methods = sorted(list(route.methods)) if hasattr(route, "methods") and route.methods else ["ANY"]
+        path = getattr(route, "path", "unknown")
+        name = getattr(route, "name", "unnamed")
+        print(f"  [{', '.join(methods)}] {path} -> {name}")
+
+    print("=== STARTUP COMPLETE ===")
+
+except Exception as e:
+    print("=== STARTUP FAILED ===")
+    traceback.print_exc()
+    raise e
+
+# Export the application for Vercel WSGI/ASGI handler
 __all__ = ["app"]
